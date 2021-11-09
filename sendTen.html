@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+        <title>sendTen</title>
+        <link rel="shortcut icon" href="#">
+    </head>
+    <body>
+        <button onclick="sendTen()">send 10 TAZ</button> 
+        <div>
+            <label for="success"></label><br>
+            <input type="text" name="success" id="success" disabled>
+        </div>
+
+        <script>           
+            getAccount()
+            var User
+            const recipient = "0x15433DA387451F9dE4565280C85506CB71aF9376"
+            const amount = "10"
+
+            async function sendTen(){
+                const provider = new ethers.providers.Web3Provider(window.ethereum)
+                const signer = provider.getSigner() 
+                const contractAddress = "0x2B1F46e1e14b9D84FeB6Dd420CD25ab534bd25a2"
+
+                const contractABI = [
+                    "function balanceOf(address) view returns (uint)",
+                    "function decimals() view returns (uint8)",
+                    "function transfer(address to, uint amount)",
+                    "event Transfer(address indexed from, address indexed to, uint amount)"
+                ]
+
+                const contract = new ethers.Contract(contractAddress, contractABI, signer)
+
+                tx = await contract.transfer(recipient, ethers.utils.parseUnits(amount))
+                await tx.wait()
+
+                document.getElementById('success').value = `${User} sent 10 TAZ to ${recipient}`
+            }
+            
+            async function getAccount() {
+                const accounts = await ethereum.request({
+                    method: 'eth_requestAccounts'
+                })
+                User = accounts[0]; 
+            }
+        </script>
+    </body>
+</html>

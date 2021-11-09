@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+        <title>BalanceOf</title>
+        <link rel="shortcut icon" href="#">
+    </head>
+    <body>
+        <h4>Get the Balance from the ERC20 Token 'TAZ'</h4>            
+
+        <button onclick="showBalance()">show Balance</button>
+        <p></p>
+        <div>
+            <div>
+                <label for="address">User Address:</label><br>
+                <input size="50" type="text" name="address" id="address" disabled>
+            </div>
+            <br>
+            <div>
+                <label for="balance">Token Balance:</label><br>
+                <input size="50" type="text" name="balance" id="balance" disabled>
+            </div>
+        </div>
+
+        <script>            
+            getAccount()
+            var User
+
+            async function showBalance(){
+                const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+                const contractAddress = "0x2B1F46e1e14b9D84FeB6Dd420CD25ab534bd25a2"
+
+                const contractABI = [
+                    "function decimals() view returns (uint8)",
+                    "function balanceOf(address) view returns (uint)",
+                    "function transfer(address to, uint amount)",
+                    "event Transfer(address indexed from, address indexed to, uint amount)"
+                ]
+
+                const contract = new ethers.Contract(contractAddress, contractABI, provider)
+                const decimals = await contract.decimals()
+                const balance = await contract.balanceOf(User)
+                const balanceFormatted = ethers.utils.formatUnits(balance, decimals)
+                
+                document.getElementById('address').value = User
+                document.getElementById('balance').value = balanceFormatted
+            }
+            
+            async function getAccount() {
+                const accounts = await ethereum.request({
+                    method: 'eth_requestAccounts'
+                })
+                User = accounts[0]; 
+            }
+        </script>
+    </body>
+</html>
